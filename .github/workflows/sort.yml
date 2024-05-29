@@ -1,0 +1,42 @@
+name: Sort input.txt Alphabetically
+
+on:
+  push:
+    branches:
+      - main  # or the branch you want to monitor
+  schedule:
+    - cron: '0 0 * * *'  # This runs the action daily at midnight
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  sort-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Sort input.txt alphabetically and save to input_ordered.txt
+        run: |
+          if [ -f input.txt ]; then
+            # Sort the contents of input.txt and save it to input_ordered.txt
+            sort input.txt -o input_ordered.txt
+          else
+            echo "input.txt not found!"
+          fi
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check if there are changes to commit
+          if [ -n "$(git status --porcelain)" ]; then
+            git add input_ordered.txt
+            git commit -m "Save sorted input.txt to input_ordered.txt"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
