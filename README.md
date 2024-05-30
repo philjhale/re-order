@@ -1,0 +1,1 @@
+This repo contains a workflow that sorts `input.txt` into alphabetic order and commits a new file called `input_ordered.txt`. To test the workflow, make a change to `input.txt` and the workflow will run automatically.
